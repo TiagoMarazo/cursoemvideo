@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tarefas</title>
+    <style>
+        .done{
+            color: grey;
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lista de Tarefas</h1>
+    <input type="text" id="tarefa" placeholder="Descrição da Tarefa">
+    <button id="inserir">Inserir</button>
+    <ul id="listaTarefas"></ul>
+    <script>
+        const lista = document.querySelector("ul#listaTarefas")
+        //butão de adicionar
+        const addBut = document.querySelector("button#inserir")
+        addBut.addEventListener("click",addTarefa)
+        //adicionando tarefas
+        function addTarefa (){
+            let nomeTarefa = document.querySelector("input#tarefa").value
+            //criando li pai que recebera as tarefas
+            let item = document.createElement("li")
+            //criando caixa de checkbox
+            let caixa = document.createElement("input")
+            caixa.type = "checkbox"
+            
+            let texto = document.createElement("span")
+            texto.innerText = nomeTarefa
+            
+            caixa.addEventListener("change", function(){
+                if(caixa.checked){
+                    texto.classList.add("done")
+                }else{
+                    texto.classList.remove("done")
+                }
+            })
+
+            let delBut = document.createElement("button")
+            delBut.innerText = "Apagar"
+            delBut.addEventListener("click", () => item.remove())
+            
+            item.appendChild(caixa)
+            item.appendChild(texto)
+            item.appendChild(delBut)
+            lista.appendChild(item)
+
+        }
+    </script>
+</body>
+</html>
