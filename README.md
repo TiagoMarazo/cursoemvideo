@@ -1,2 +1,3 @@
-# cursoemvideo
-Arquivos de estudos do curso em video.
+# Minha Área de Estudos
+Aqui é guardo meus projetos de estudo, desenvolvidos para práticar e aprender as tecnologias.
+Além de algum material do curso em video..
