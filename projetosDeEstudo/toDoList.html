@@ -12,45 +12,74 @@
     </style>
 </head>
 <body>
-    <h1>Lista de Tarefas</h1>
-    <input type="text" id="tarefa" placeholder="Descrição da Tarefa">
-    <button id="inserir">Inserir</button>
-    <ul id="listaTarefas"></ul>
+    <h1>Gerenciador de Tarefas</h1>
+    <input type="text" placeholder="Insira sua tarefa.." id="nomeTarefa">
+    <button id="adicionar">Adicionar</button>
+    <ul id="listaPrincipal"></ul>
     <script>
-        const lista = document.querySelector("ul#listaTarefas")
-        //butão de adicionar
-        const addBut = document.querySelector("button#inserir")
-        addBut.addEventListener("click",addTarefa)
-        //adicionando tarefas
+        //refatorando com Array para inserir localStorage.
+        let listaPrincipal = document.querySelector("ul#listaPrincipal")
+        //array iniciamente vazia.
+        let arrayTarefas = []
+        //Puxa tarefas salvas no localStorage caso haja.        
+        arrayTarefas = JSON.parse(localStorage.getItem("tarefasSalvas"))
+
+        mostrarLista()
+        let adicionar = document.querySelector("button#adicionar")
+        adicionar.addEventListener("click",addTarefa)        
+
+        //Inserindo tarefa no Array:
         function addTarefa (){
-            let nomeTarefa = document.querySelector("input#tarefa").value
-            //criando li pai que recebera as tarefas
-            let item = document.createElement("li")
-            //criando caixa de checkbox
-            let caixa = document.createElement("input")
-            caixa.type = "checkbox"
-            
-            let texto = document.createElement("span")
-            texto.innerText = nomeTarefa
-            
-            caixa.addEventListener("change", function(){
-                if(caixa.checked){
-                    texto.classList.add("done")
-                }else{
-                    texto.classList.remove("done")
-                }
-            })
-
-            let delBut = document.createElement("button")
-            delBut.innerText = "Apagar"
-            delBut.addEventListener("click", () => item.remove())
-            
-            item.appendChild(caixa)
-            item.appendChild(texto)
-            item.appendChild(delBut)
-            lista.appendChild(item)
-
+            console.log("Adicionando tarefa..")
+            let nomeTarefa = document.querySelector("input#nomeTarefa").value.trim()
+            if (nomeTarefa === "") return
+            arrayTarefas.push({nome: nomeTarefa, check: false})
+            //Atualizando a lista:
+            mostrarLista()
         }
+        //Criando a lista de tarefas a partida da Array.
+        function mostrarLista (){
+            console.log("Carregando lista de tarefas...")
+            //Limpa lista existente para criar LISTA ATUALIZADA.
+            listaPrincipal.innerHTML = ""
+            //Salvando array atualizada no localStorage:
+            localStorage.setItem("tarefasSalvas", JSON.stringify(arrayTarefas))
+            arrayTarefas.forEach((tarefa,index) => {
+                // NOME da tarefa.
+                let nomeTarefa = document.createElement("span")
+                nomeTarefa.textContent = tarefa.nome
+                // LISTAGEM por item que receberá os demais elementos.
+                let item = document.createElement("li")
+                //item.id = JSON.stringify(index) - esperar pra ver
+                //caixa de CHECKBOX.
+                let feito = document.createElement("input")
+                feito.type = "checkbox"
+                //Recebe valor de CHECK guardado no localStorage.
+                feito.checked = tarefa.check
+                feito.addEventListener("change", () => {
+                    tarefa.check = feito.checked
+                    localStorage.setItem("tarefasSalvas",JSON.stringify(arrayTarefas))
+                    //vamos ver se vai funcionar corretamente assim, se não adicionar target pelo event.
+                    if (feito.checked){
+                         nomeTarefa.classList.add("done")
+                    }else{
+                        nomeTarefa.classList.remove("done")
+                    }
+                })
+                //Botão de DELETAR.
+                let deletar = document.createElement("button")
+                deletar.innerText = "Deletar"
+                deletar.addEventListener("click", () => {
+                    item.remove()
+                    arrayTarefas.splice(index,1)
+                    mostrarLista()
+                })
+                item.appendChild(nomeTarefa)
+                item.appendChild(feito)
+                item.appendChild(deletar)
+                listaPrincipal.appendChild(item)
+            });
+        }    
     </script>
 </body>
 </html>
